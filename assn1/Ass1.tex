@@ -1,0 +1,164 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\begin{document}
+ML Assignment 1 \\
+Ankit Kumar 170121 \\
+Chaitanya Pathare 19111061 \\
+Hemant Kumar 170297 \\
+Rahul Ninaji Pakhare 19111068 \\
+Raunak Kumar 19111069 \\
+
+\vspace{2mm}
+
+1.
+
+Given equation \[ argmin _{ w \epsilon R^d } \frac{1}{2} || \textbf{w} || _2 ^2 + C \Sigma _{i=1} ^n  ([ 1 - y^i <w,x^i> ]_+)^2  \quad (P1) \]
+
+rewritten as new optimization problem
+
+\[ argmin _{ w \epsilon R^d } \frac{1}{2} || \textbf{w} || _2 ^2 + C \Sigma _{i=1} ^n \xi _i^2   \]
+
+\[ s.t. y^i <w,x^i>  \geqslant 1 - \xi _i , for \quad all \quad i \epsilon [n] \quad (P2) \]
+
+Introducing dual variable $ \alpha _i $ for each of the constraints in (P2)
+
+\[ \therefore L(w, \xi , \alpha ) =  \frac{1}{2} || \textbf{w} || _2 ^2 + C \Sigma _{i=1} ^n \xi _i^2 + \Sigma _{i=1} ^n \alpha _i ( 1 - \xi _i -y^i<w,x^i>)   \qquad (P3) \]
+
+
+
+
+\newpage
+
+
+2. To get the dual problem  from the above equation (P3)
+
+put $  \frac{ \eth L }{ \eth w } = 0 and  \frac{ \eth L }{ \eth \xi } = 0  $
+
+\[    \frac{ \eth L }{ \eth w } = ||\textbf{w}|| - \Sigma _{i=1} ^n \alpha _i x_i =0  \]
+\[ or \quad ||\textbf{w}|| = \Sigma _{i=1} ^n \alpha _i x^i \]
+
+ and
+
+\[    \frac{ \eth L }{ \eth \xi } =2C \xi _i  - \Sigma _{i=1} ^n \alpha _i =0  \]
+\[ or \quad \xi _i = \frac{1}{2C} \Sigma _{i=1} ^n \alpha _i  \]
+
+
+Optimization problem comes down to 
+
+\[ = \frac{1}{2} \Sigma _{i=1} ^n \Sigma _{j=1} ^n ( \alpha _i \alpha _j y^i y^j< x^i x^j>) +  \frac{1}{4C} \Sigma _{i=1} ^n  \alpha _i ^2 + \Sigma _{ i=1 } ^n \alpha_i - \frac{1}{2C}\Sigma _{i=1} ^n  \alpha _i ^2 \]
+
+ \[ -  \Sigma _{i=1} ^n \Sigma _{j=1} ^n ( \alpha _i x^i y^i)(\alpha _j x^j y^j)) \]
+
+
+ \[ =argmin(\Sigma _{i=1} ^n \alpha _i - \frac{1}{4C} (\Sigma _{i=1} ^n  \alpha _i ^2) - \frac{1}{2}\Sigma _{i=1} ^n \Sigma _{j=1} ^n ( \alpha _i \alpha _j y^i y^j< x^i x^j>)) \quad (D2) \]
+
+\[ All \quad above \quad \textbf{w} \epsilon R ^{d+1} , \quad \textbf{x} \epsilon R ^{d+1} \]
+\newpage
+3. 
+
+a. Stochastic coordinate descent 
+
+Given,
+
+	\[ P1 \quad f = \quad argmin _{ w \epsilon R^d } \frac{1}{2} || \textbf{w} || _2 ^2 + C \Sigma _{i=1} ^n  ([ 1 - y^i <w,x^i> ]_+)^2   \]
+
+now  get gradient for P1 
+
+\[  \nabla f = || \textbf{w} ||  + 2 C \Sigma _{i=1} ^n  ([ 1 - y^i <w,x^i> ]_+)(-y^i x^i) \]
+
+\vspace{5mm}
+
+Note: $ [ 1 - y^i <w,x^i> ]_+ = \{ ( 1 - y^i <w,x^i> ) \quad if \quad y^i <w,x^i> < 1 $ \\
+\[ \qquad \qquad  0 \quad if \quad y^i <w,x^i> \geqslant 1 \} \] 
+
+iterate till the time end for the X
+\\
+
+do  1.find gradient for each data point in the given Batch set B  \vspace{1mm}
+
+ $ \quad $ 2.update w for these $ w = w - \eta 2 C \Sigma _{i=x} ^{x+B}  ([ 1 - y^i <w,x^i> ]_+)(-y^i x^i)$
+
+\vspace{5mm}
+
+
+
+
+c. Method used for  D2 minimization 
+
+\[ D2  \qquad => argmin(\Sigma _{i=1} ^n \alpha _i - \frac{1}{4C} (\Sigma _{i=1} ^n  \alpha _i ^2) - \frac{1}{2}\Sigma _{i=1} ^n \Sigma _{j=1} ^n ( \alpha _i \alpha _j y^i y^j< x^i x^j>)) \]
+
+concentrate on $ \alpha _i $
+
+\[  argmin( \alpha _i - \frac{1}{4C} (  \alpha _i ^2) -  (\Sigma _{i \neq j}   \alpha _j ^2) - \frac{1}{2}( \alpha _i^2 ||x^i||^2) - \alpha _iy^i\Sigma _{i \neq j}  (  \alpha _j  y^j< x^i x^j>)) \]
+
+
+\[ Let \quad  x = \alpha _i , \quad q = ||x ^i || ^2 , \quad p = y^i\Sigma _{i \neq j}  (  \alpha _j  y^j< x^i x^j>) , \quad r = (\Sigma _{i \neq j}   \alpha _j ^2) \]
+
+
+\[ \therefore argmin(x^2( \frac{1}{2} q + \frac{1}{4C}) - x(1-p) + r ) \]
+
+\[ Let \quad \frac{ q ^0 }{2} = ( \frac{q}{2} + \frac{1}{4C} ) \qquad   \therefore argmin( \frac{ q ^0}{2} x^2 - x(1-p) + r ) \]
+
+
+
+
+  minimum at $ x^m = \frac{ (1-p) }{ q^0 } $
+  
+  If $ x^m \epsilon [0,\varpropto] $ then $ x^m $ is solution
+  
+   elseif $ x^m < 0 $ solution is 0
+   
+    else solution is  $ \varpropto $ or Not defined.
+  
+  
+Note: 
+\[ p = y^i\Sigma _{i \neq j}  (  \alpha _j  y^j < x^i x^j > ) \]
+
+\[ = w^T \textbf{x} ^i - \alpha _i  y^i q^0 \]
+
+Algorithm minimize:
+
+\[ intialize  \quad \alpha ^ T  =  \{ 0,0,........0 \}  _{ 1Xn } \quad w = \{ 0,0, .....0 \} _{1Xn} \]
+
+\[ { w= \Sigma _{i=1} ^n \alpha _i y_i x^i } \]
+
+
+Note: We have appended one extra dimension to our data i.e if X = $ \begin{bmatrix}
+    x_{11} & x_{12} & x_{13} &  .& x_{1n}  \\
+    x_{21} & . & . & . & x_{2n} \\
+    . & . & . & .& . \\
+    . & . & . & .& . \\
+    x_{n1} & . & . & .  & x_{nn} \\
+  \end{bmatrix} $
+
+
+ and then transformed  X $ \rightarrow X^0 = \begin{bmatrix}
+    x_{11} & x_{12} & x_{13} &  .& x_{1n} & 1  \\
+    x_{21} & . & . & . & x_{2n} & 1\\
+    . & . & . & .& . & 1\\
+    . & . & . & .& . & 1\\
+    . & . & . & .& . & 1\\
+    x_{n1} & . & . & .  & x_{nn} & 1\\
+  \end{bmatrix} $
+ 
+ 
+ so that w[d-1] =b , {d is dimension of each data point in $ X^0 $ }
+ 
+ iterate till time does not end, for each data point in $ X^0 $ 
+ 
+ \vspace{2mm}
+   
+ 
+ \quad Do - 1. Calculate $ \alpha _i $ if $ \alpha _i \geqslant 0 $ then $ \alpha [i] = \alpha _i $
+ 
+\qquad \qquad \qquad \qquad else $ \alpha [i] = 0$
+ 
+   \qquad   2. Update w $ w= \Sigma _{i=1} ^n \alpha _i y_i x^i $
+  
+w will converge after sufficient number of iteration.   
+     
+   
+\end{document}
